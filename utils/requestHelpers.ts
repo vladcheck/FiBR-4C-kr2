@@ -1,11 +1,20 @@
 import type { Response } from "express";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 
-export const getOk = (res: Response, send?: any) =>
-  res.status(StatusCodes.OK).send(send ?? ReasonPhrases.OK);
-export const getNotFound = (res: Response, send?: any) =>
-  res.status(StatusCodes.NOT_FOUND).send(send ?? ReasonPhrases.NOT_FOUND);
-export const getBadRequest = (res: Response, send?: any) =>
-  res.status(StatusCodes.BAD_REQUEST).send(send ?? ReasonPhrases.BAD_REQUEST);
-export const getCreated = (res: Response, send?: any) =>
-  res.status(StatusCodes.CREATED).send(send ?? ReasonPhrases.CREATED);
+const getRequestHelperFactory = (status: number, reason: string) => {
+  console.log(status, reason);
+  return (res: Response, send?: any) => res.status(status).send(send ?? reason);
+};
+export const getOk = getRequestHelperFactory(StatusCodes.OK, ReasonPhrases.OK);
+export const getNotFound = getRequestHelperFactory(
+  StatusCodes.NOT_FOUND,
+  ReasonPhrases.NOT_FOUND,
+);
+export const getBadRequest = getRequestHelperFactory(
+  StatusCodes.BAD_REQUEST,
+  ReasonPhrases.BAD_REQUEST,
+);
+export const getCreated = getRequestHelperFactory(
+  StatusCodes.CREATED,
+  ReasonPhrases.CREATED,
+);

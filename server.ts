@@ -231,6 +231,7 @@ app.get("/", async (_req: Request, res: Response) => {
 
 app.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
-  console.log(`Swagger UI доступен по адресу http://localhost:${PORT}/api-
-docs`);
+  console.log(
+    `Swagger UI доступен по адресу http://localhost:${PORT}/api-docs`,
+  );
 });
