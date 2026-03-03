@@ -5,6 +5,7 @@ const PORT = process.env["PORT"] || "3000";
 
 const swaggerOptions = {
   definition: {
+    failOnErrors: true,
     openapi: "3.0.0",
     info: { title: "API AUTH", version: "1.0.0" },
     servers: [

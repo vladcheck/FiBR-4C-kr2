@@ -1,5 +1,6 @@
 import express, { json } from "express";
 import { nanoid } from "nanoid";
+import cors from "cors";
 import { swaggerParams } from "./swagger";
 import type { Response, Request } from "express";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
@@ -22,8 +23,10 @@ let products = productsOriginal;
 const PORT = process.env["PORT"] || "3000";
 
 const app = express();
+app.use(cors());
 app.use(...swaggerParams);
 app.use(json());
+app.disable("x-powered-by"); // обфускация стека технологий
 
 app.get("/api/users", async (_req: Request, res: Response) => {
   return res.status(StatusCodes.OK).json(users);
