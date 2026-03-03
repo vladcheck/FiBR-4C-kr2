@@ -10,6 +10,7 @@ import productsOriginal from "./mock/products";
 import usersOriginal from "./mock/users";
 import User from "./entities/User";
 import { hashPassword, verifyPassword } from "./utils/password";
+import morgan from "morgan";
 
 const ID_SIZE = 6;
 const nextId = (id = ID_SIZE) => nanoid(id);
@@ -24,6 +25,7 @@ const PORT = process.env["PORT"] || "3000";
 
 const app = express();
 app.use(cors());
+app.use(morgan("tiny"));
 app.use(...swaggerParams);
 app.use(json());
 app.disable("x-powered-by"); // обфускация стека технологий
