@@ -20,7 +20,7 @@ app.disable("x-powered-by"); // обфускация стека технолог
 app.use(...swaggerParams);
 app.use(cors());
 app.use(morgan("tiny"));
-app.use(json());
+app.use(express.json());
 app.use(apiRouter);
 
 app.listen(PORT, () => {
