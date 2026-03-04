@@ -5,11 +5,21 @@ import productsRouter from "./productsRouter";
 import { getOk } from "../utils/requestHelpers";
 
 const apiRouter: Router = Router();
-apiRouter.use("/auth", authRouter);
-apiRouter.use("/users", usersRouter);
-apiRouter.use("/products", productsRouter);
+apiRouter.use("/api/auth", authRouter);
+apiRouter.use("/api/users", usersRouter);
+apiRouter.use("/api/products", productsRouter);
 
-apiRouter.get("/", async (_req: Request, res: Response) => {
+/**
+ * @swagger
+ * /:
+ *  get:
+ *    summary: Возвращает OK
+ *    description: Возвращает OK для проверки, что сервер запущен
+ *    responses:
+ *      200:
+ *        description: Сервер работает
+ */
+apiRouter.get("/api/", async (_req: Request, res: Response) => {
   return getOk(res);
 });
 

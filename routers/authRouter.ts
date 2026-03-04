@@ -14,7 +14,7 @@ const authRouter: Router = Router();
  *   post:
  *     summary: Регистрация пользователя
  *     description: Создает нового пользователя с хешированным паролем
- *     tags: [Auth]
+ *     tags: [Auth, Users]
  *     requestBody:
  *       required: true
  *       content:
@@ -22,19 +22,23 @@ const authRouter: Router = Router();
  *           schema:
  *             type: object
  *             required:
- *               - username
+ *               - first_name
+ *               - last_name
  *               - password
- *               - age
+ *               - email
  *             properties:
- *               username:
+ *                first_name:
  *                 type: string
- *                 example: ivan
- *               password:
+ *                 example: Ivan
+ *                last_name:
+ *                  type: string
+ *                  example: Sidelnikov
+ *                password:
  *                 type: string
  *                 example: qwerty123
- *               age:
- *                 type: integer
- *                 example: 20
+ *                email:
+ *                 type: string
+ *                 example: ivan@yandex.ru
  *     responses:
  *       201:
  *         description: Пользователь успешно создан
@@ -43,18 +47,21 @@ const authRouter: Router = Router();
  *             schema:
  *               type: object
  *               properties:
- *                 id:
- *                   type: string
- *                   example: ab12cd
- *                 username:
- *                   type: string
- *                   example: ivan
- *                 age:
- *                   type: integer
- *                   example: 20
- *                 hashedPassword:
- *                   type: string
- *                   example: $2b$10$kO6Hq7ZKfV4cPzGm8u7mEuR7r4Xx2p9mP0q3t1yZbCq9Lh5a8b1QW
+ *                  id:
+ *                    type: string
+ *                    example: ab12cd
+ *                  first_name:
+ *                    type: string
+ *                    example: Ivan
+ *                  last_name:
+ *                    type: string
+ *                    example: Sidelnikov
+ *                  email:
+ *                    type: string
+ *                    example: ivan@yandex.ru
+ *                  hashedPassword:
+ *                    type: string
+ *                    example: $2b$10$kO6Hq7ZKfV4cPzGm8u7mEuR7r4Xx2p9mP0q3t1yZbCq9Lh5a8b1QW
  *       400:
  *         description: Некорректные данные
  */
@@ -126,47 +133,36 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 });
 
 /**
-* @swagger
-* /api/auth/login:
-*   post:
-*     summary: Авторизация пользователя
-*     description: Проверяет логин и пароль пользователя
-*     tags: [Auth]
-*     requestBody:
-*       required: true
-*       content:
-*         application/json:
-*           schema:
-*             type: object
-*             required:
-*               - username
-*               - password
-*             properties:
-*               username:
-*                 type: string
-*                 example: ivan
-*               password:
-*                 type: string
-*                 example: qwerty123
-*     responses:
-*       200:
-*         description: Успешная авторизация
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 login:
-*                   type: boolean
-*                   example: true
-*       400:
-*         description: Отсутствуют обязательные поля
-*       401:
-*         description: Неверные учетные данные
-*       404:
-*         description: Пользователь не найден
-Теперь регистрация выглядит следующим образом:
-*/
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Авторизация пользователя
+ *     description: Проверяет логин и пароль пользователя
+ *     tags: [Auth, Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: ivan
+ *               password:
+ *                 type: string
+ *                 example: qwerty123
+ *     responses:
+ *       400:
+ *         description: Отсутствуют обязательные поля или введены неверные учетные данные (напр. пароли не совпадают)
+ *       404:
+ *         description: Пользователь не найден
+ *       200:
+ *         description: Пользователь успешно авторизован
+ */
 authRouter.post("/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -180,7 +176,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 
   const passwordsMatch = await verifyPassword(password, u.hash);
   if (!passwordsMatch) {
-    return res.status(StatusCodes.FORBIDDEN).send("Неверный пароль.");
+    return getBadRequest(res, "Неверный пароль.");
   }
 
   return getOk(res, `Здравствуйте, ${u.first_name}.`);
