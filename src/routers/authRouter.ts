@@ -1,17 +1,16 @@
 import { Router, type Request, type Response } from "express";
-import { ReasonPhrases, StatusCodes } from "http-status-codes";
-import { getErrorString, nextId } from "../server";
-import {
-  getBadRequest,
-  getInternalServerError,
-  getNotFound,
-  getOk,
-} from "../utils/requestHelpers";
+import { StatusCodes } from "http-status-codes";
 import User from "../entities/User";
 import users from "../mock/users";
-import { hashPassword, verifyPassword } from "../utils/password";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import authMiddleware from "../middleware/authMiddleware";
+import { getErrorString, nextId } from "../../server";
+import { hashPassword, verifyPassword } from "../utils/password";
+import {
+  getBadRequest,
+  getNotFound,
+  getInternalServerError,
+} from "../utils/requestHelpers";
 
 const JWT_CONFIG = {
   SECRET: "access_secret",
