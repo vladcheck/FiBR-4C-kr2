@@ -4,6 +4,7 @@ import { getBadRequest, getNotFound, getOk } from "../utils/requestHelpers";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 import Product from "../entities/Product";
 import originalProducts from "../mock/products";
+import authMiddleware from "../middleware/authMiddleware";
 
 const productsRouter: Router = Router();
 
@@ -160,7 +161,7 @@ productsRouter
  *          description: Товар успешно удален
  */
 productsRouter
-  .get("/:id", async (req: Request, res: Response) => {
+  .get("/:id", authMiddleware, async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!id) {
       return getBadRequest(res);
@@ -170,9 +171,9 @@ productsRouter
       return getNotFound(res);
     }
 
-    return getOk(res);
+    return res.status(StatusCodes.OK).json(product);
   })
-  .put("/:id", async (req: Request, res: Response) => {
+  .put("/:id", authMiddleware, async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!id) {
       return getBadRequest(res);
@@ -202,7 +203,7 @@ productsRouter
     products = products.splice(productIndex, 1, p);
     return getOk(res);
   })
-  .delete("/:id", async (req: Request, res: Response) => {
+  .delete("/:id", authMiddleware, async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!id) {
       return getBadRequest(res);
