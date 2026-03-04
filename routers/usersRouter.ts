@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { getBadRequest, getNotFound } from "../utils/requestHelpers";
 import { StatusCodes } from "http-status-codes";
-import products from "../mock/products";
 import users from "../mock/users";
 import { Router } from "express";
 
@@ -91,7 +90,7 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
     return getNotFound(res);
   }
 
-  return res.status(StatusCodes.OK).json(products);
+  return res.status(StatusCodes.OK).json(user);
 });
 
 export default usersRouter;

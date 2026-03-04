@@ -19,3 +19,7 @@ export const getCreated = getRequestHelperFactory(
   StatusCodes.CREATED,
   ReasonPhrases.CREATED,
 );
+export const getUnauthorized = getRequestHelperFactory(
+  StatusCodes.UNAUTHORIZED,
+  ReasonPhrases.UNAUTHORIZED,
+);

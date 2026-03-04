@@ -5,6 +5,12 @@ import { getBadRequest, getNotFound, getOk } from "../utils/requestHelpers";
 import User from "../entities/User";
 import users from "../mock/users";
 import { hashPassword, verifyPassword } from "../utils/password";
+import jwt from "jsonwebtoken";
+
+const JWT_CONFIG = {
+  SECRET: "access_secret",
+  EXP: 900, // 15m
+};
 
 const authRouter: Router = Router();
 
@@ -176,10 +182,39 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 
   const passwordsMatch = await verifyPassword(password, u.hash);
   if (!passwordsMatch) {
-    return getBadRequest(res, "Неверный пароль.");
+    return getBadRequest(res, "Invalid credentials.");
   }
 
-  return getOk(res, `Здравствуйте, ${u.first_name}.`);
+  const accessToken = jwt.sign(
+    {
+      sub: u.id,
+      ...Object.entries(u).filter(([k, _]) => {
+        return k !== "id";
+      }),
+    },
+    JWT_CONFIG.SECRET,
+    {
+      expiresIn: 900,
+    },
+  );
+
+  return res.status(StatusCodes.OK).json({ accessToken });
 });
+
+/**
+ * @swagger
+ * /api/auth/me:
+ *  summary:
+ *  description:
+ *  content:
+ *  responses:
+ *    200:
+ *      description: Пользователь авторизован
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: "#/components/schema/User"
+ */
+authRouter.get("/me", async (_req, _res) => {});
 
 export default authRouter;

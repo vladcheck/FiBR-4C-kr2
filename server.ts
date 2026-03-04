@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express from "express";
 import { nanoid } from "nanoid";
 import cors from "cors";
 import { swaggerParams } from "./swagger";
