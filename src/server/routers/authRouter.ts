@@ -12,7 +12,7 @@ import {
   getUnauthorized,
 } from "../utils/requestHelpers";
 import JwtSingleton, { TokenType } from "../utils/jwt";
-import { getErrorString, nextId } from "../../../server";
+import { getErrorString, nextId } from "../server";
 
 const authRouter: Router = Router();
 

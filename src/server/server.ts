@@ -2,8 +2,8 @@ import express from "express";
 import { nanoid } from "nanoid";
 import cors from "cors";
 import morgan from "morgan";
-import { swaggerParams } from "./src/server/config/swagger";
-import apiRouter from "./src/server/routers/apiRouter";
+import { swaggerParams } from "./config/swagger";
+import apiRouter from "./routers/apiRouter";
 
 const ID_SIZE = 6;
 export const nextId = (id = ID_SIZE) => nanoid(id);
