@@ -4,11 +4,13 @@ import Main from "../shared/ui/Main";
 import Footer from "../shared/ui/Footer";
 
 export default function RootLayout() {
-  return <div id="root">
-    <Header/>
-    <Main>
-      <Outlet />
-    </Main>
-    <Footer/>
-  </div>
+  return (
+    <div id="root">
+      <Header />
+      <Main className="flex flex-col justify-center items-center">
+        <Outlet />
+      </Main>
+      <Footer />
+    </div>
+  );
 }
