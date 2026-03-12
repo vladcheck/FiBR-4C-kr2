@@ -6,13 +6,16 @@ export default function SubmitButton({
   children,
 }: PropsWithChildren & {
   formId: string;
-  onClick?: () => void;
+  onClick?: (e?: any) => void;
 }) {
   return (
     <button
       type="submit"
       form={formId}
-      onClick={onClick}
+      onClick={(e: any) => {
+        e.preventDefault();
+        onClick?.(e);
+      }}
       className="transition-colors duration-150 bg-gray-900 text-white px-4 py-1 rounded-xl hover:bg-gray-800"
     >
       {children}

@@ -1,12 +1,21 @@
-import { Outlet } from "react-router";
+import { Link, Outlet } from "react-router";
 import Header from "../shared/ui/Header";
 import Main from "../shared/ui/Main";
 import Footer from "../shared/ui/Footer";
+import FlexContainer from "../shared/ui/FlexContainer";
 
 export default function RootLayout() {
   return (
     <div id="root">
-      <Header />
+      <Header className="w-dvw flex justify-between items-center px-6 py-3 border-b-amber-600 border-b-2">
+        <Link to={"/"}>
+          <h1 className="text-2xl">E-commerce website</h1>
+        </Link>
+        <FlexContainer className="gap-4">
+          <Link to={"/register"}>Зарегистрироваться</Link>
+          <Link to={"/login"}>Войти</Link>
+        </FlexContainer>
+      </Header>
       <Main className="flex flex-col justify-center items-center">
         <Outlet />
       </Main>

@@ -1,5 +1,13 @@
-import type { PropsWithChildren } from "react";
+import type { BaseHTMLAttributes, PropsWithChildren } from "react";
+import cn from "../utils/cn";
 
-export default function Header({children}: PropsWithChildren) {
-  return <header className="header">{children}</header>
+export default function Header({
+  children,
+  ...props
+}: PropsWithChildren & BaseHTMLAttributes<HTMLDivElement>) {
+  return (
+    <header {...props} className={cn("header", props.className)}>
+      {children}
+    </header>
+  );
 }

@@ -14,18 +14,18 @@ const usersRouter: Router = Router();
  *      type: object
  *      required:
  *       - id
- *       - first_name
- *       - last_name
+ *       - firstName
+ *       - lastName
  *       - email
  *       - password
  *      properties:
  *        id:
  *          type: string
  *          description: Уникальный ID пользователя
- *        first_name:
+ *        firstName:
  *          type: string
  *          description: Имя
- *        last_name:
+ *        lastName:
  *          type: string
  *          description: Фамилия
  *        email:
@@ -36,8 +36,8 @@ const usersRouter: Router = Router();
  *          description: Пароль
  *      example:
  *        id: "adfs31"
- *        first_name: Сергей
- *        last_name: Овчинников
+ *        firstName: Сергей
+ *        lastName: Овчинников
  *        email: sergei_ovchinnikov@yandex.ru
  *        password: "12345678"
  */

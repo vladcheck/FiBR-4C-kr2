@@ -1,9 +1,10 @@
-import { useReducer } from "react";
+import { useContext, useReducer } from "react";
 import { Link } from "react-router";
 import SubmitButton from "../../shared/ui/SubmitButton";
 import FlexContainer from "../../shared/ui/FlexContainer";
 import Input from "../../shared/ui/Input";
 import LabelInputBlock from "../../shared/ui/LabelInputBlock";
+import ApiContext from "../../features/api/ApiContext";
 
 interface FormState {
   email: string;
@@ -40,6 +41,7 @@ function reducer(state: FormState, action: any) {
 }
 
 export default function LoginPage() {
+  const { api } = useContext(ApiContext);
   const [formState, dispatch] = useReducer(reducer, initialFormState);
 
   const onSubmit = () => {};

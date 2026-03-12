@@ -5,6 +5,8 @@ import FlexContainer from "../../shared/ui/FlexContainer";
 import Input from "../../shared/ui/Input";
 import LabelInputBlock from "../../shared/ui/LabelInputBlock";
 import TextInput from "../../shared/ui/TextInput";
+import useApi from "../../features/api/useApi";
+import type { AxiosError, AxiosResponse } from "axios";
 
 interface FormState {
   email: string;
@@ -65,9 +67,19 @@ function reducer(state: FormState, action: any) {
 }
 
 export default function RegisterPage() {
+  const api = useApi();
   const [formState, dispatch] = useReducer(reducer, initialFormState);
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    api
+      .createUser(formState)
+      .then((response: AxiosResponse) => {
+        console.log(response.data);
+      })
+      .catch((error: AxiosError) => {
+        console.error(error);
+      });
+  };
 
   return (
     <FlexContainer flexDir="col" justify="center" align="center">

@@ -21,7 +21,7 @@ function getUserTokenBody(user: User, type: TokenType) {
     ? Object.entries(user).filter(([k]) => {
         return k !== "id";
       })
-    : { first_name: user.first_name };
+    : { firstName: user.firstName };
 }
 
 /**
@@ -38,15 +38,15 @@ function getUserTokenBody(user: User, type: TokenType) {
  *           schema:
  *             type: object
  *             required:
- *               - first_name
- *               - last_name
+ *               - firstName
+ *               - lastName
  *               - password
  *               - email
  *             properties:
- *                first_name:
+ *                firstName:
  *                 type: string
  *                 example: Ivan
- *                last_name:
+ *                lastName:
  *                  type: string
  *                  example: Sidelnikov
  *                password:
@@ -66,10 +66,10 @@ function getUserTokenBody(user: User, type: TokenType) {
  *                  id:
  *                    type: string
  *                    example: ab12cd
- *                  first_name:
+ *                  firstName:
  *                    type: string
  *                    example: Ivan
- *                  last_name:
+ *                  lastName:
  *                    type: string
  *                    example: Sidelnikov
  *                  email:
@@ -84,7 +84,7 @@ function getUserTokenBody(user: User, type: TokenType) {
 authRouter.post("/register", async (req: Request, res: Response) => {
   const b = req.body;
 
-  if (["email", "password", "first_name", "last_name"].some((key) => !b[key])) {
+  if (["email", "password", "firstName", "lastName"].some((key) => !b[key])) {
     return getBadRequest(res);
   }
   if (b.password.length < 4) {
@@ -109,26 +109,26 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     );
   }
 
-  if (!b.first_name.match(/[A-ZА-ЯЁ][a-zа-яё]{1,63}/)) {
-    return getBadRequest(res, getErrorString("Некорретное имя", b.first_name));
+  if (!b.firstName.match(/[A-ZА-ЯЁ][a-zа-яё]{1,63}/)) {
+    return getBadRequest(res, getErrorString("Некорретное имя", b.firstName));
   }
 
-  if (!b.last_name.match(/[A-ZА-ЯЁ][a-zа-яё]{1,63}/)) {
+  if (!b.lastName.match(/[A-ZА-ЯЁ][a-zа-яё]{1,63}/)) {
     return getBadRequest(
       res,
-      getErrorString("Некорретная фамилия", b.first_name),
+      getErrorString("Некорретная фамилия", b.firstName),
     );
   }
 
   if (b.email.length < 5) {
     return getBadRequest(
       res,
-      getErrorString("Почта не может быть короче пяти символов", b.first_name),
+      getErrorString("Почта не может быть короче пяти символов", b.firstName),
     );
   } else if (!b.email.match(/[a-zA-Z0-9_]{1,}@[a-z0-9]{1,}\.[ru|com|yahoo]/)) {
     return getBadRequest(
       res,
-      getErrorString("Неправильная почта", b.first_name),
+      getErrorString("Неправильная почта", b.firstName),
     );
   } else if (users.some((u) => u.email === b.email)) {
     return res
@@ -138,8 +138,8 @@ authRouter.post("/register", async (req: Request, res: Response) => {
 
   const u: User = {
     id: nextId(),
-    first_name: b.first_name,
-    last_name: b.last_name,
+    firstName: b.firstName,
+    lastName: b.lastName,
     email: b.email,
     hash: await hashPassword(b.password),
   };
@@ -200,7 +200,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     getUserTokenBody(u, "access"),
   );
   const refreshToken = JwtSingleton.grantRefreshToken(u.id, {
-    first_name: u.first_name,
+    firstName: u.firstName,
   });
 
   return res.status(StatusCodes.OK).json({ accessToken, refreshToken });
@@ -264,10 +264,10 @@ authRouter.post("/refresh", (req: Request, res: Response) => {
  *                id:
  *                  type: string
  *                  example: dfas12
- *                first_name:
+ *                firstName:
  *                  type: string
  *                  example: Сергей
- *                last_name:
+ *                lastName:
  *                  type: string
  *                  example: Овчинников
  *                email:
