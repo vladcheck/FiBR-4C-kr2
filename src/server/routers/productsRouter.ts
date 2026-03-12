@@ -161,7 +161,8 @@ productsRouter
  *          description: Товар успешно удален
  */
 productsRouter
-  .get("/:id", authMiddleware, async (req: Request, res: Response) => {
+  .get("/:id", async (req: Request, res: Response) => {
+    // TODO: нужен ли нам authMiddleware для GET?
     const { id } = req.params;
     if (!id) {
       return getBadRequest(res);
