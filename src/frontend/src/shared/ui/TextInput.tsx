@@ -7,6 +7,8 @@ export default function TextInput({
   ...props
 }: {
   value?: string | number;
+  min?: number;
+  max?: number;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   required: boolean;
 } & BaseHTMLAttributes<HTMLInputElement>) {

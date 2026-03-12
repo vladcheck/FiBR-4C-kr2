@@ -3,7 +3,7 @@ import ApiContext from "../../../features/api/ApiContext";
 import Product from "../../../entities/Product";
 import { Link, useParams } from "react-router";
 import FlexContainer from "../../../shared/ui/FlexContainer";
-import FullProductCard from "./ui/FullProductCard";
+import FullProductCard from "../ui/FullProductCard";
 import useCart from "../../../features/cart/useCart";
 
 export default function ProductPage() {

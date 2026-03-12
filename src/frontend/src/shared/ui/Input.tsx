@@ -6,6 +6,11 @@ import type {
 import cn from "../utils/cn";
 import InputWrapper from "./InputWrapper";
 
+interface NumberInputProps {
+  min?: number;
+  max?: number;
+}
+
 export default function Input({
   value,
   onChange,
@@ -15,7 +20,8 @@ export default function Input({
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   required: boolean;
   type: HTMLInputTypeAttribute;
-} & BaseHTMLAttributes<HTMLInputElement>) {
+} & BaseHTMLAttributes<HTMLInputElement> &
+  Partial<NumberInputProps>) {
   return (
     <InputWrapper>
       <input

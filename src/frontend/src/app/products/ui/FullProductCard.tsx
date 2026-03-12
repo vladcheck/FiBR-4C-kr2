@@ -1,7 +1,7 @@
-import Product from "../../../../entities/Product";
-import Button from "../../../../shared/ui/Button";
-import FlexContainer from "../../../../shared/ui/FlexContainer";
-import Price from "../../../../shared/ui/Price";
+import Product from "../../../entities/Product";
+import Button from "../../../shared/ui/Button";
+import FlexContainer from "../../../shared/ui/FlexContainer";
+import Price from "../../../shared/ui/Price";
 
 export default function FullProductCard({
   p,
@@ -15,12 +15,14 @@ export default function FullProductCard({
   onRemoveFromCart: (id: string) => void;
 }) {
   return (
-    <FlexContainer flexDir="col" className="min-h-[80dvh] gap-4">
+    <FlexContainer flexDir="col" className="gap-4">
       <FlexContainer className="gap-2">
         <ProductImageCarousel images={p.images || []} />
         <FlexContainer flexDir="col" className="bg-gray-100 rounded-2xl p-4">
           <Price>{p.price}</Price>
-          <h1 className="text-[1.4rem]">{p.title}</h1>
+          <h1 className="text-[1.4rem] max-w-100 wrap-break-word break-all">
+            {p.title}
+          </h1>
           <span className="score">SCORE_IN_HERE</span>
           <p>{p.description}</p>
           <span>{p.category}</span>

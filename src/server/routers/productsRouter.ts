@@ -84,7 +84,7 @@ productsRouter
   })
   .post("/", async (req: Request, res: Response) => {
     if (!req.body) {
-      return res.status(StatusCodes.BAD_REQUEST).send("body is empty");
+      return getBadRequest(res, "body is empty");
     }
     if (!req.body.price || !req.body.title || !req.body.category) {
       return getBadRequest(res);
