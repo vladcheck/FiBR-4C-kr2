@@ -2,7 +2,6 @@ import { Router, type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import User from "../entities/User";
 import users from "../mock/users";
-import { JwtPayload } from "jsonwebtoken";
 import authMiddleware from "../middleware/authMiddleware";
 import { hashPassword, verifyPassword } from "../utils/password";
 import {
@@ -13,6 +12,7 @@ import {
 } from "../utils/requestHelpers";
 import JwtSingleton, { TokenType } from "../utils/jwt";
 import { getErrorString, nextId } from "../server";
+import { JwtPayload } from "jsonwebtoken";
 
 const authRouter: Router = Router();
 

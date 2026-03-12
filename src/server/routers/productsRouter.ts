@@ -3,7 +3,7 @@ import { StatusCodes, ReasonPhrases } from "http-status-codes";
 import Product from "../entities/Product";
 import originalProducts from "../mock/products";
 import authMiddleware from "../middleware/authMiddleware";
-import { getErrorString, nextId } from "../../server";
+import { getErrorString, nextId } from "../server";
 import { getBadRequest, getNotFound, getOk } from "../utils/requestHelpers";
 
 const productsRouter: Router = Router();

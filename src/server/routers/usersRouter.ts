@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getBadRequest, getNotFound } from "../src/utils/requestHelpers";
+import { getBadRequest, getNotFound } from "../utils/requestHelpers";
 import { StatusCodes } from "http-status-codes";
 import users from "../mock/users";
 import { Router } from "express";

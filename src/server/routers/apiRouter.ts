@@ -2,7 +2,7 @@ import { Router, type Request, type Response } from "express";
 import authRouter from "./authRouter";
 import usersRouter from "./usersRouter";
 import productsRouter from "./productsRouter";
-import { getOk } from "../src/utils/requestHelpers";
+import { getOk } from "../utils/requestHelpers";
 
 const apiRouter: Router = Router();
 apiRouter.use("/api/auth", authRouter);
