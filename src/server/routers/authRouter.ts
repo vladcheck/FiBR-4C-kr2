@@ -300,7 +300,7 @@ authRouter.get(
       return getNotFound(res);
     }
 
-    res.status(StatusCodes.OK).json(u);
+    res.status(StatusCodes.OK).json(sanitize(u));
   },
 );
 
