@@ -5,7 +5,6 @@ import FlexContainer from "../../shared/ui/FlexContainer";
 import Input from "../../shared/ui/Input";
 import LabelInputBlock from "../../shared/ui/LabelInputBlock";
 import useApi from "../../features/api/useApi";
-import useLocalStorage from "../../shared/hooks/useLocalStorage";
 import useNotify from "../../features/notifications/useNotify";
 
 interface FormState {
@@ -45,7 +44,6 @@ function reducer(state: FormState, action: any) {
 export default function LoginPage() {
   const navigate = useNavigate();
   const notifier = useNotify();
-  const localStorage = useLocalStorage();
   const formRef = useRef<HTMLFormElement>(null);
   const api = useApi();
   const [formState, dispatch] = useReducer(reducer, initialFormState);
@@ -56,18 +54,18 @@ export default function LoginPage() {
       formState.email &&
       formState.password
     ) {
-      try {
-        const response = await api.login(formState);
-        localStorage.store("accessToken", response.data.accessToken);
-        localStorage.store("refreshToken", response.data.refreshToken);
-        notifier.notifySuccess(`Вы вошли в аккаунт ${formState.email}`);
-        setTimeout(() => {
-          navigate("/shop");
-        }, 2000);
-      } catch (error: any) {
-        notifier.notifyError(error);
-        console.error(error);
-      }
+      api
+        .login(formState)
+        .then(() => {
+          notifier.notifySuccess(`Вы вошли в аккаунт ${formState.email}`);
+          setTimeout(() => {
+            navigate("/shop");
+          }, 2000);
+        })
+        .catch((error) => {
+          notifier.notifyError(error as string);
+          console.error(error);
+        });
     }
   };
 

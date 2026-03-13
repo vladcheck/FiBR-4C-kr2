@@ -49,11 +49,21 @@ class ApiAdapter {
       email: data.email,
       password: data.password,
     });
+    if (
+      response.status === HttpStatusCode.Created ||
+      response.status === HttpStatusCode.Ok
+    ) {
+      localStorage.setItem("accessToken", response.data.accessToken);
+    }
     return response;
   }
 
   async login(data: { email: string; password: string }) {
     const response = await apiClient.post("/auth/login", data);
+    if (response.status === HttpStatusCode.Ok) {
+      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("refreshToken", response.data.refreshToken);
+    }
     return response;
   }
 

@@ -1,12 +1,11 @@
 import { useReducer, useRef, type ChangeEvent } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import SubmitButton from "../../shared/ui/SubmitButton";
 import FlexContainer from "../../shared/ui/FlexContainer";
 import Input from "../../shared/ui/Input";
 import LabelInputBlock from "../../shared/ui/LabelInputBlock";
 import TextInput from "../../shared/ui/TextInput";
 import useApi from "../../features/api/useApi";
-import useLocalStorage from "../../shared/hooks/useLocalStorage";
 
 interface FormState {
   email: string;
@@ -71,19 +70,22 @@ function reducer(
 
 export default function RegisterPage() {
   const api = useApi();
+  const navigate = useNavigate();
   const formRef = useRef<HTMLFormElement>(null);
   const [formState, dispatch] = useReducer(reducer, initialFormState);
-  const localStorage = useLocalStorage();
 
   const onSubmit = async () => {
     if (formRef.current?.checkValidity()) {
-      try {
-        const response = await api.createUser(formState);
-        localStorage.store("accessToken", response.data.accessToken);
-        console.log(response);
-      } catch (error) {
-        console.error(error);
-      }
+      api
+        .createUser(formState)
+        .then(() => {
+          setTimeout(() => {
+            navigate("/login");
+          }, 1000);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   };
 
