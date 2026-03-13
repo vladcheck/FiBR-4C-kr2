@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { HttpStatusCode } from "axios";
 
 const HOST = "http://localhost";
 const PORT = 3000;
@@ -12,10 +12,23 @@ const apiClient = axios.create({
   },
 });
 
-function cleanupBeforeCookieRefreshReject(error: unknown) {
+function cleanupBeforeCookieRefreshReject(
+  error: unknown,
+): Promise<typeof error> {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   return Promise.reject(error);
+}
+
+function storeTokens({
+  accessToken,
+  refreshToken,
+}: {
+  accessToken: string;
+  refreshToken: string;
+}) {
+  localStorage.setItem("accessToken", accessToken);
+  localStorage.setItem("refreshToken", refreshToken);
 }
 
 class ApiAdapter {
@@ -42,6 +55,36 @@ class ApiAdapter {
   async login(data: { email: string; password: string }) {
     const response = await apiClient.post("/auth/login", data);
     return response;
+  }
+
+  async _refreshTokens() {
+    const refreshToken = localStorage.getItem("refreshToken");
+    const response = await apiClient.post("/auth/refresh", { refreshToken });
+    const { newAccessToken, newRefreshToken } = response.data;
+    storeTokens({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    });
+    return response;
+  }
+
+  async isLoggedIn(): Promise<boolean> {
+    const accessToken = localStorage.getItem("accessToken");
+    const response = await apiClient.get("/auth/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (response.status === HttpStatusCode.Ok) {
+      return true;
+    }
+
+    const refreshResponse = await this._refreshTokens();
+    if (refreshResponse.status === HttpStatusCode.Ok) {
+      return true;
+    }
+    return false;
   }
 
   async updateUserById(id: string, data: object) {

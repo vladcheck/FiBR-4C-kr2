@@ -4,8 +4,20 @@ import Main from "../shared/ui/Main";
 import Footer from "../shared/ui/Footer";
 import FlexContainer from "../shared/ui/FlexContainer";
 import { ToastContainer } from "react-toastify";
+import useApi from "../features/api/useApi";
+import { useEffect, useState } from "react";
 
 export default function RootLayout() {
+  const api = useApi();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    api
+      .isLoggedIn()
+      .then((v) => setIsLoggedIn(v))
+      .catch(() => setIsLoggedIn(false));
+  }, [api]);
+
   return (
     <div id="root">
       <Header className="w-dvw flex justify-between items-center px-6 py-3 gap-4 border-b-amber-600 border-b-2">
@@ -18,10 +30,14 @@ export default function RootLayout() {
           name="productSearch"
           id="product-search"
         />
-        <FlexContainer className="gap-4">
-          <Link to={"/register"}>Зарегистрироваться</Link>
-          <Link to={"/login"}>Войти</Link>
-        </FlexContainer>
+        {!isLoggedIn ? (
+          <FlexContainer className="gap-4">
+            <Link to={"/register"}>Зарегистрироваться</Link>
+            <Link to={"/login"}>Войти</Link>
+          </FlexContainer>
+        ) : (
+          <Link to={"/profile"}>Профиль</Link>
+        )}
       </Header>
       <Main className="flex flex-col justify-center items-center">
         <Outlet />
