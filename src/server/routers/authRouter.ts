@@ -13,6 +13,8 @@ import {
 import JwtSingleton, { TokenType } from "../utils/jwt";
 import { getErrorString, nextId } from "../server";
 import { JwtPayload } from "jsonwebtoken";
+import dbAdapter from "../utils/DbAdapter";
+import path from "node:path";
 
 function sanitize<T extends { hash: string }>(value: T): Omit<T, "hash"> {
   const valueCopy = Object.assign(value);
@@ -21,6 +23,7 @@ function sanitize<T extends { hash: string }>(value: T): Omit<T, "hash"> {
 }
 
 const authRouter: Router = Router();
+const userPath = path.resolve("db", "users.json");
 
 function getUserTokenBody(user: User, type: TokenType) {
   return type === "access"
@@ -152,7 +155,15 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     hash: await hashPassword(b.password),
   };
   users.push(u);
-  console.log(u);
+
+  try {
+    await dbAdapter.appendEntry(userPath, u);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .send(`couldn't write to database: ${error}`);
+  }
 
   const userCopy: any = sanitize(u);
   return res.status(StatusCodes.CREATED).json(userCopy);

@@ -1,32 +1,28 @@
-// DbAdapter.ts
 import jsonfile from "jsonfile";
 import fs from "node:fs/promises";
 
-type GenericDatabaseEntry = { id: string; [key: string]: unknown };
+type DbEntry = { id: string };
 
 class DbAdapter {
-  async readEntries(path: string) {
-    const data = await jsonfile.readFile(path, { encoding: "utf8" });
+  async readEntries<T extends DbEntry>(path: string): Promise<T[]> {
+    const data: T[] = await jsonfile.readFile(path, { encoding: "utf8" });
     return data;
   }
 
-  async appendEntry(path: string, entry: GenericDatabaseEntry) {
-    const data: GenericDatabaseEntry[] = await this.readEntries(path);
-    jsonfile
-      .writeFile(path, [...data, entry], { flag: "w" })
-      .then(() => {
-        console.log(`Appended new entry to '${path}'`);
-      })
-      .catch((err) => console.error(err));
+  async appendEntry<T extends DbEntry>(path: string, entry: T): Promise<void> {
+    const data: T[] = await this.readEntries(path);
+    await jsonfile.writeFile(path, [...data, entry], { flag: "w", spaces: 2 });
+    console.log(`Appended new entry to '${path}'`);
   }
 
-  async deleteEntryById(path: string, id: string) {
-    const obj = await this.readEntries(path).then(
-      (obj: GenericDatabaseEntry[]) => obj.filter((entry) => entry.id !== id),
-    );
-    jsonfile
-      .writeFile(path, obj, { flag: "a" })
-      .catch((err) => console.error(err));
+  async deleteEntryById<T extends DbEntry>(
+    path: string,
+    id: string,
+  ): Promise<void> {
+    const data: T[] = await this.readEntries(path);
+    const updatedData = data.filter((entry) => entry.id !== id);
+    await jsonfile.writeFile(path, updatedData, { flag: "w", spaces: 2 });
+    console.log(`Deleted entry '${id}' from '${path}'`);
   }
 
   async createFile(path: string): Promise<boolean> {
@@ -40,14 +36,14 @@ class DbAdapter {
     }
   }
 
-  async deleteAllEntries(path: string) {
-    jsonfile
-      .writeFile(path, [], { flag: "w" })
-      .catch((err) => console.error(err));
+  async deleteAllEntries(path: string): Promise<void> {
+    await jsonfile.writeFile(path, [], { flag: "w", spaces: 2 });
+    console.log(`All entries deleted from '${path}'`);
   }
 
-  async deleteFile(path: string) {
-    fs.rm(path);
+  async deleteFile(path: string): Promise<void> {
+    await fs.rm(path);
+    console.log(`File '${path}' deleted`);
   }
 }
 
