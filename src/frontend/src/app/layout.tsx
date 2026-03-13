@@ -3,6 +3,7 @@ import Header from "../shared/ui/Header";
 import Main from "../shared/ui/Main";
 import Footer from "../shared/ui/Footer";
 import FlexContainer from "../shared/ui/FlexContainer";
+import { ToastContainer } from "react-toastify";
 
 export default function RootLayout() {
   return (
@@ -26,6 +27,7 @@ export default function RootLayout() {
         <Outlet />
       </Main>
       <Footer />
+      <ToastContainer />
     </div>
   );
 }

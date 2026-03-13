@@ -1,9 +1,12 @@
-import { useReducer } from "react";
-import { Link } from "react-router";
+import { useReducer, useRef } from "react";
+import { Link, useNavigate } from "react-router";
 import SubmitButton from "../../shared/ui/SubmitButton";
 import FlexContainer from "../../shared/ui/FlexContainer";
 import Input from "../../shared/ui/Input";
 import LabelInputBlock from "../../shared/ui/LabelInputBlock";
+import useApi from "../../features/api/useApi";
+import useLocalStorage from "../../shared/hooks/useLocalStorage";
+import useNotify from "../../features/notifications/useNotify";
 
 interface FormState {
   email: string;
@@ -40,14 +43,39 @@ function reducer(state: FormState, action: any) {
 }
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const notifier = useNotify();
+  const localStorage = useLocalStorage();
+  const formRef = useRef<HTMLFormElement>(null);
+  const api = useApi();
   const [formState, dispatch] = useReducer(reducer, initialFormState);
 
-  const onSubmit = () => {};
+  const onSubmit = async () => {
+    if (
+      formRef.current?.checkValidity() &&
+      formState.email &&
+      formState.password
+    ) {
+      try {
+        const response = await api.login(formState);
+        localStorage.store("accessToken", response.data.accessToken);
+        localStorage.store("refreshToken", response.data.refreshToken);
+        notifier.notifySuccess(`Вы вошли в аккаунт ${formState.email}`);
+        setTimeout(() => {
+          navigate("/shop");
+        }, 2000);
+      } catch (error: any) {
+        notifier.notifyError(error);
+        console.error(error);
+      }
+    }
+  };
 
   return (
     <FlexContainer flexDir="col" justify="center" align="center">
       <h1 className="text-2xl">Вход</h1>
       <form
+        ref={formRef}
         className="form flex flex-col justify-center items-center gap-2"
         id="login-form"
       >
@@ -55,8 +83,11 @@ export default function LoginPage() {
           <Input
             type="email"
             value={formState.email}
-            onChange={() => {
-              dispatch({ type: ReducerAction.SET_EMAIL });
+            onChange={(e) => {
+              dispatch({
+                type: ReducerAction.SET_EMAIL,
+                email: e.target.value,
+              });
             }}
             id="email"
             required
@@ -66,8 +97,11 @@ export default function LoginPage() {
           <Input
             type="password"
             value={formState.password}
-            onChange={() => {
-              dispatch({ type: ReducerAction.SET_PASSWORD });
+            onChange={(e) => {
+              dispatch({
+                type: ReducerAction.SET_PASSWORD,
+                password: e.target.value,
+              });
             }}
             id="password"
             required

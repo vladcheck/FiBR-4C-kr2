@@ -1,4 +1,4 @@
-import { useReducer, type ChangeEvent } from "react";
+import { useReducer, useRef, type ChangeEvent } from "react";
 import { Link } from "react-router";
 import SubmitButton from "../../shared/ui/SubmitButton";
 import FlexContainer from "../../shared/ui/FlexContainer";
@@ -6,7 +6,7 @@ import Input from "../../shared/ui/Input";
 import LabelInputBlock from "../../shared/ui/LabelInputBlock";
 import TextInput from "../../shared/ui/TextInput";
 import useApi from "../../features/api/useApi";
-import type { AxiosError, AxiosResponse } from "axios";
+import useLocalStorage from "../../shared/hooks/useLocalStorage";
 
 interface FormState {
   email: string;
@@ -71,23 +71,27 @@ function reducer(
 
 export default function RegisterPage() {
   const api = useApi();
+  const formRef = useRef<HTMLFormElement>(null);
   const [formState, dispatch] = useReducer(reducer, initialFormState);
+  const localStorage = useLocalStorage();
 
-  const onSubmit = () => {
-    api
-      .createUser(formState)
-      .then((response: AxiosResponse) => {
-        console.log(response.data);
-      })
-      .catch((error: AxiosError) => {
+  const onSubmit = async () => {
+    if (formRef.current?.checkValidity()) {
+      try {
+        const response = await api.createUser(formState);
+        localStorage.store("accessToken", response.data.accessToken);
+        console.log(response);
+      } catch (error) {
         console.error(error);
-      });
+      }
+    }
   };
 
   return (
     <FlexContainer flexDir="col" justify="center" align="center">
       <h1 className="text-2xl">Регистрация</h1>
       <form
+        ref={formRef}
         className="form flex flex-col justify-center items-center gap-2"
         id="register-form"
       >

@@ -39,6 +39,11 @@ class ApiAdapter {
     return response;
   }
 
+  async login(data: { email: string; password: string }) {
+    const response = await apiClient.post("/auth/login", data);
+    return response;
+  }
+
   async updateUserById(id: string, data: object) {
     const response = await apiClient.post(`/users/${id}`, data);
     return response;
