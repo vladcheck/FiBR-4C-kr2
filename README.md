@@ -18,7 +18,7 @@ npm run dev
 | `/api/products`      | `GET`, `POST`          | Нет                |
 | `/api/products/:id`  | `GET`, `PUT`, `DELETE` | Да                 |
 | `/api/users`         | `GET`                  | Нет                |
-| `/api/users/:id`     | `GET`                  | Нет                |
+| `/api/users/:id`     | `GET`, `DELETE`                  | N/A                |
 | `/api/auth/register` | `POST`                 | Нет                |
 | `/api/auth/login`    | `POST`                 | Да                 |
 | `/api/auth/refresh`    | `POST`                 | Да                 |
