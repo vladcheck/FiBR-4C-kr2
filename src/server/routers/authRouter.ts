@@ -14,6 +14,12 @@ import JwtSingleton, { TokenType } from "../utils/jwt";
 import { getErrorString, nextId } from "../server";
 import { JwtPayload } from "jsonwebtoken";
 
+function sanitize<T extends { hash: string }>(value: T): Omit<T, "hash"> {
+  const valueCopy = Object.assign(value);
+  delete valueCopy.hash;
+  return valueCopy;
+}
+
 const authRouter: Router = Router();
 
 function getUserTokenBody(user: User, type: TokenType) {
@@ -80,6 +86,8 @@ function getUserTokenBody(user: User, type: TokenType) {
  *                    example: $2b$10$kO6Hq7ZKfV4cPzGm8u7mEuR7r4Xx2p9mP0q3t1yZbCq9Lh5a8b1QW
  *       400:
  *         description: Некорректные данные
+ *       409:
+ *         description: Пользователь с такой почтой уже существует
  */
 authRouter.post("/register", async (req: Request, res: Response) => {
   const b = req.body;
@@ -144,8 +152,10 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     hash: await hashPassword(b.password),
   };
   users.push(u);
+  console.log(u);
 
-  return res.status(StatusCodes.CREATED).json(u);
+  const userCopy: any = sanitize(u);
+  return res.status(StatusCodes.CREATED).json(userCopy);
 });
 
 /**
@@ -189,6 +199,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
   if (!u) {
     return getNotFound(res);
   }
+  console.log(u);
 
   const passwordsMatch = await verifyPassword(password, u.hash);
   if (!passwordsMatch) {
