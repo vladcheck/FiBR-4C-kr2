@@ -214,7 +214,9 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     firstName: u.firstName,
   });
 
-  return res.status(StatusCodes.OK).json({ accessToken, refreshToken });
+  return res
+    .status(StatusCodes.OK)
+    .json({ accessToken, refreshToken, uid: u.id });
 });
 
 authRouter.post("/refresh", (req: Request, res: Response) => {
