@@ -14,7 +14,7 @@ export default function Button({
       type="button"
       onClick={onClick}
       className={cn(
-        "px-2 py-0.5 bg-gray-400 rounded-md hover:bg-amber-500",
+        "px-2 py-0.5 bg-gray-200 rounded-md hover:border-amber-400 hover:bg-amber-200",
         className,
       )}
     >
