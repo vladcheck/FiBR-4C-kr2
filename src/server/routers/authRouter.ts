@@ -1,7 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import User from "../entities/User";
-import users from "../mock/users";
 import authMiddleware from "../middleware/authMiddleware";
 import { hashPassword, verifyPassword } from "../utils/password";
 import {
@@ -13,6 +12,8 @@ import {
 import JwtSingleton, { TokenType } from "../utils/jwt";
 import { getErrorString, nextId } from "../server";
 import { JwtPayload } from "jsonwebtoken";
+import dbAdapter from "../utils/DbAdapter";
+import path from "node:path";
 
 function sanitize<T extends { hash: string }>(value: T): Omit<T, "hash"> {
   const valueCopy = Object.assign(value);
@@ -21,6 +22,7 @@ function sanitize<T extends { hash: string }>(value: T): Omit<T, "hash"> {
 }
 
 const authRouter: Router = Router();
+const userPath = path.resolve("db", "users.json");
 
 function getUserTokenBody(user: User, type: TokenType) {
   return type === "access"
@@ -138,10 +140,13 @@ authRouter.post("/register", async (req: Request, res: Response) => {
       res,
       getErrorString("Неправильная почта", b.firstName),
     );
-  } else if (users.some((u) => u.email === b.email)) {
-    return res
-      .status(StatusCodes.CONFLICT)
-      .send("Профиль с такой почтой уже существует.");
+  } else {
+    const entries: User[] = await dbAdapter.readEntries(userPath);
+    if (entries.some((u) => u.email === b.email)) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .send("Профиль с такой почтой уже существует.");
+    }
   }
 
   const u: User = {
@@ -151,8 +156,15 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     email: b.email,
     hash: await hashPassword(b.password),
   };
-  users.push(u);
-  console.log(u);
+
+  try {
+    await dbAdapter.appendEntry(userPath, u);
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .send(`couldn't write to database: ${error}`);
+  }
 
   const userCopy: any = sanitize(u);
   return res.status(StatusCodes.CREATED).json(userCopy);
@@ -195,11 +207,11 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     return getBadRequest(res);
   }
 
-  const u = users.find((u) => u.email === email);
+  const entries: User[] = await dbAdapter.readEntries(userPath);
+  const u = entries.find((u) => u.email === email);
   if (!u) {
     return getNotFound(res);
   }
-  console.log(u);
 
   const passwordsMatch = await verifyPassword(password, u.hash);
   if (!passwordsMatch) {
@@ -219,7 +231,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     .json({ accessToken, refreshToken, uid: u.id });
 });
 
-authRouter.post("/refresh", (req: Request, res: Response) => {
+authRouter.post("/refresh", async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
@@ -233,9 +245,10 @@ authRouter.post("/refresh", (req: Request, res: Response) => {
   try {
     const payload = JwtSingleton.verify(refreshToken, "refresh");
 
-    const u = users.find((u) => u.id === payload.sub);
+    const entries: User[] = await dbAdapter.readEntries(userPath);
+    const u = entries.find((u) => u.id === payload.sub);
     if (!u) {
-      return getUnauthorized(res, "User not found");
+      return getNotFound(res, "user not found");
     }
 
     const { newAccessToken, newRefreshToken } = JwtSingleton.rotateTokens(
@@ -297,7 +310,8 @@ authRouter.get(
       return getInternalServerError(res);
     }
 
-    const u = users.find((u) => u.id === id);
+    const entries: User[] = await dbAdapter.readEntries(userPath);
+    const u = entries.find((u) => u.id === id);
     if (!u) {
       return getNotFound(res);
     }

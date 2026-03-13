@@ -1,13 +1,14 @@
 import type { Request, Response } from "express";
 import { getBadRequest, getNotFound, getOk } from "../utils/requestHelpers";
 import { StatusCodes } from "http-status-codes";
-import initialUsers from "../mock/users";
 import { Router } from "express";
 import authMiddleware from "../middleware/authMiddleware";
-
-let users = initialUsers;
+import dbAdapter from "../utils/DbAdapter";
+import path from "node:path";
+import User from "../entities/User";
 
 const usersRouter: Router = Router();
+const userPath = path.resolve("db", "users.json");
 
 /**
  * @swagger
@@ -62,7 +63,8 @@ const usersRouter: Router = Router();
  *                $ref: '#/components/schemas/User'
  */
 usersRouter.get("/", async (_req: Request, res: Response) => {
-  return res.status(StatusCodes.OK).json(users);
+  const entries: User[] = await dbAdapter.readEntries(userPath);
+  return res.status(StatusCodes.OK).json(entries);
 });
 
 /**
@@ -99,7 +101,8 @@ usersRouter
     if (!id) {
       return getBadRequest(res);
     }
-    const user = users.find((u) => u.id === id);
+    const entries: User[] = await dbAdapter.readEntries(userPath);
+    const user = entries.find((u) => u.id === id);
     if (!user) {
       return getNotFound(res);
     }
@@ -112,20 +115,16 @@ usersRouter
       return getBadRequest(res, "uid not provided");
     }
 
-    let index = -1;
-    const user = users.find((u, i) => {
-      if (u.id === id) {
-        index = i;
-        return true;
-      }
-      return false;
-    });
-    if (!user && index === -1) {
-      return getNotFound(res, `user with id ${id} was not found`);
+    try {
+      await dbAdapter.deleteEntryById(userPath, id as string);
+      return getOk(res, "user deleted");
+    } catch (error) {
+      console.error(error);
+      return getNotFound(
+        res,
+        `user with id ${id} was not found or doesn't exist`,
+      );
     }
-
-    users = users.toSpliced(index, 1);
-    return getOk(res, "user deleted");
   });
 
 export default usersRouter;

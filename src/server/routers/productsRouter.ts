@@ -1,12 +1,19 @@
 import { Router, type Request, type Response } from "express";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 import Product from "../entities/Product";
-import originalProducts from "../mock/products";
 import authMiddleware from "../middleware/authMiddleware";
 import { getErrorString, nextId } from "../server";
-import { getBadRequest, getNotFound, getOk } from "../utils/requestHelpers";
+import {
+  getBadRequest,
+  getInternalServerError,
+  getNotFound,
+  getOk,
+} from "../utils/requestHelpers";
+import dbAdapter from "../utils/DbAdapter";
+import path from "node:path";
 
 const productsRouter: Router = Router();
+const productsPath = path.resolve("db", "products.json");
 
 /**
  * @swagger
@@ -42,7 +49,6 @@ const productsRouter: Router = Router();
  *       description: "Фарворовая чашка на восьмое марта! Подари маме, бабушке, подруге!"
  *       price: 1400
  */
-let products = originalProducts;
 
 /**
  * @swagger
@@ -80,7 +86,8 @@ let products = originalProducts;
  */
 productsRouter
   .get("/", async (_req: Request, res: Response) => {
-    return res.status(StatusCodes.OK).json(products);
+    const entries: Product[] = await dbAdapter.readEntries(productsPath);
+    return res.status(StatusCodes.OK).json(entries);
   })
   .post("/", async (req: Request, res: Response) => {
     if (!req.body) {
@@ -109,11 +116,16 @@ productsRouter
       description: req.body.description ?? "",
     };
 
-    products.push(newProduct);
-    return res
-      .status(StatusCodes.CREATED)
-      .json(newProduct)
-      .send(ReasonPhrases.CREATED);
+    try {
+      await dbAdapter.appendEntry(productsPath, newProduct);
+      return res
+        .status(StatusCodes.CREATED)
+        .json(newProduct)
+        .send(ReasonPhrases.CREATED);
+    } catch (error) {
+      console.error(error);
+      return getInternalServerError(res, error);
+    }
   });
 
 /**
@@ -167,6 +179,8 @@ productsRouter
     if (!id) {
       return getBadRequest(res);
     }
+
+    const products: Product[] = await dbAdapter.readEntries(productsPath);
     const product = products.find((p) => p.id === id);
     if (!product) {
       return getNotFound(res);
@@ -180,6 +194,7 @@ productsRouter
       return getBadRequest(res);
     }
 
+    const products: Product[] = await dbAdapter.readEntries(productsPath);
     const productIndex = products.findIndex((p) => p.id === id);
     if (productIndex === -1) {
       return getNotFound(res);
@@ -201,7 +216,7 @@ productsRouter
       }
     }
 
-    products = products.splice(productIndex, 1, p);
+    // products = products.splice(productIndex, 1, p); TODO: implement dbAdapter.updateEntry()
     return getOk(res);
   })
   .delete("/:id", authMiddleware, async (req: Request, res: Response) => {
@@ -210,13 +225,19 @@ productsRouter
       return getBadRequest(res);
     }
 
-    const productIndex = products.findIndex((p) => p.id === id);
-    if (productIndex === -1) {
-      return getNotFound(res);
+    const products: Product[] = await dbAdapter.readEntries(productsPath);
+    const product = products.find((p) => p.id === id);
+    if (!product) {
+      return getNotFound(res, "product not found");
     }
 
-    products = products.splice(productIndex, 1);
-    return getOk(res);
+    try {
+      await dbAdapter.deleteEntryById(productsPath, product.id);
+      return getOk(res);
+    } catch (error) {
+      console.error(error);
+      return getInternalServerError(res, error);
+    }
   });
 
 export default productsRouter;
