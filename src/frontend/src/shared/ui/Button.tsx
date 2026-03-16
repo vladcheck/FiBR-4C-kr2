@@ -1,5 +1,5 @@
 import { MouseEvent, PropsWithChildren } from "react";
-import cn from "../utils/cn";
+import cn from "@/shared/utils/cn";
 
 export default function Button({
   onClick,

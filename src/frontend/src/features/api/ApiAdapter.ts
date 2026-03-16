@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, HttpStatusCode } from "axios";
-import { UserLoginResponse, UserResponse } from "../../entities/User";
-import { Product, ProductResponse } from "../../entities/Product";
+import { UserLoginResponse, UserResponse } from "@/entities/User";
+import { Product, ProductResponse } from "@/entities/Product";
 
 const HOST = "http://localhost";
 const PORT = 3000;

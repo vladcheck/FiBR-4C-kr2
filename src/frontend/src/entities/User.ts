@@ -1,1 +1,1 @@
-export * from "../../../shared/types/User";
+export * from "@root-shared/types/User";

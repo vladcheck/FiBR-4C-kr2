@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import FlexContainer from "../shared/ui/FlexContainer";
+import FlexContainer from "@/shared/ui/FlexContainer";
 
 export default function NotFoundPage() {
   return (

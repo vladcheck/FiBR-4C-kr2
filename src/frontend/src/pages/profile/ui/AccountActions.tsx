@@ -1,5 +1,5 @@
-import Button from "../../../shared/ui/Button";
-import FlexContainer from "../../../shared/ui/FlexContainer";
+import Button from "@/shared/ui/Button";
+import FlexContainer from "@/shared/ui/FlexContainer";
 
 export default function AccountActions({
   onLogOut,

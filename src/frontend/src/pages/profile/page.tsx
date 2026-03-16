@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import useApi from "../../features/api/useApi";
+import useApi from "@/features/api/useApi";
 import { useNavigate } from "react-router";
-import { UserResponse } from "../../entities/User";
+import { UserResponse } from "@root-shared/types/User";
 import UserInfoCard from "./ui/UserInfoCard";
 import AccountActions from "./ui/AccountActions";
-import FlexContainer from "../../shared/ui/FlexContainer";
-import useNotify from "../../features/notifications/useNotify";
+import FlexContainer from "@/shared/ui/FlexContainer";
+import useNotify from "@/features/notifications/useNotify";
 
 export default function ProfilePage() {
   const navigate = useNavigate();

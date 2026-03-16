@@ -1,11 +1,11 @@
 import { useReducer } from "react";
-import FlexContainer from "../../../shared/ui/FlexContainer";
-import SubmitButton from "../../../shared/ui/SubmitButton";
+import FlexContainer from "@/shared/ui/FlexContainer";
+import SubmitButton from "@/shared/ui/SubmitButton";
 import { FormAction } from "./types";
-import TextInput from "../../../shared/ui/TextInput";
-import Input from "../../../shared/ui/Input";
-import LabelInputBlock from "../../../shared/ui/LabelInputBlock";
-import useApi from "../../../features/api/useApi";
+import TextInput from "@/shared/ui/TextInput";
+import Input from "@/shared/ui/Input";
+import LabelInputBlock from "@/shared/ui/LabelInputBlock";
+import useApi from "@/features/api/useApi";
 import FullProductCard from "../ui/FullProductCard";
 
 const MIN_ALLOWED_PRICE = 1;

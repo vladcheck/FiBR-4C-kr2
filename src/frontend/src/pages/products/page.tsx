@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import { Product } from "../../entities/Product";
+import { Product } from "@/entities/Product";
 import CatalogueProductCard from "./ui/CatalogueProductCard";
-import ApiContext from "../../features/api/ApiContext";
-import FlexContainer from "../../shared/ui/FlexContainer";
-import LabelInputBlock from "../../shared/ui/LabelInputBlock";
-import useDebouncer from "../../shared/hooks/useDebouncer";
+import ApiContext from "@/features/api/ApiContext";
+import FlexContainer from "@/shared/ui/FlexContainer";
+import LabelInputBlock from "@/shared/ui/LabelInputBlock";
+import useDebouncer from "@/shared/hooks/useDebouncer";
 
 const FILTER_CONFIG = {
   price: {

@@ -1,11 +1,11 @@
 import { useReducer, useRef, type ChangeEvent } from "react";
 import { Link, useNavigate } from "react-router";
-import SubmitButton from "../../shared/ui/SubmitButton";
-import FlexContainer from "../../shared/ui/FlexContainer";
-import Input from "../../shared/ui/Input";
-import LabelInputBlock from "../../shared/ui/LabelInputBlock";
-import TextInput from "../../shared/ui/TextInput";
-import useApi from "../../features/api/useApi";
+import SubmitButton from "@/shared/ui/SubmitButton";
+import FlexContainer from "@/shared/ui/FlexContainer";
+import Input from "@/shared/ui/Input";
+import LabelInputBlock from "@/shared/ui/LabelInputBlock";
+import TextInput from "@/shared/ui/TextInput";
+import useApi from "@/features/api/useApi";
 
 interface FormState {
   email: string;

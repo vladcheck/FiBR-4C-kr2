@@ -1,1 +1,1 @@
-export * from "../../../shared/types/Product";
+export * from "@root-shared/types/Product";

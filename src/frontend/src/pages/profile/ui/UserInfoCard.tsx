@@ -1,4 +1,4 @@
-import FlexContainer from "../../../shared/ui/FlexContainer";
+import FlexContainer from "@/shared/ui/FlexContainer";
 
 export default function UserInfoCard({
   label,

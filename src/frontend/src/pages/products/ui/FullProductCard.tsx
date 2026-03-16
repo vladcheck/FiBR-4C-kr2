@@ -1,7 +1,7 @@
-import { Product } from "../../../entities/Product";
-import Button from "../../../shared/ui/Button";
-import FlexContainer from "../../../shared/ui/FlexContainer";
-import Price from "../../../shared/ui/Price";
+import { Product } from "@/entities/Product";
+import Button from "@/shared/ui/Button";
+import FlexContainer from "@/shared/ui/FlexContainer";
+import Price from "@/shared/ui/Price";
 
 export default function FullProductCard({
   p,

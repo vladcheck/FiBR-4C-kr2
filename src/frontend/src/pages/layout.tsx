@@ -1,12 +1,12 @@
 import { Link, Outlet } from "react-router";
-import Header from "../shared/ui/Header";
-import Main from "../shared/ui/Main";
-import Footer from "../shared/ui/Footer";
-import FlexContainer from "../shared/ui/FlexContainer";
+import Header from "@/shared/ui/Header";
+import Main from "@/shared/ui/Main";
+import Footer from "@/shared/ui/Footer";
+import FlexContainer from "@/shared/ui/FlexContainer";
 import { ToastContainer } from "react-toastify";
-import useApi from "../features/api/useApi";
+import useApi from "@/features/api/useApi";
 import { useEffect, useState } from "react";
-import ProfileImage from "../shared/ui/ProfileImage";
+import ProfileImage from "@/shared/ui/ProfileImage";
 
 export default function RootLayout() {
   const api = useApi();

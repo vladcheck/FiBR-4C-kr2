@@ -3,7 +3,7 @@ import type {
   ChangeEvent,
   HTMLInputTypeAttribute,
 } from "react";
-import cn from "../utils/cn";
+import cn from "@/shared/utils/cn";
 import InputWrapper from "./InputWrapper";
 
 interface NumberInputProps {

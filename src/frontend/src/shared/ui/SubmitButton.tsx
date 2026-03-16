@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from "react";
+import type { PropsWithChildren, SyntheticEvent } from "react";
 
 export default function SubmitButton({
   formId,
@@ -6,13 +6,13 @@ export default function SubmitButton({
   children,
 }: PropsWithChildren & {
   formId: string;
-  onClick?: (e?: any) => void;
+  onClick?: (e?: SyntheticEvent) => void;
 }) {
   return (
     <button
       type="submit"
       form={formId}
-      onClick={(e: any) => {
+      onClick={(e) => {
         e.preventDefault();
         onClick?.(e);
       }}

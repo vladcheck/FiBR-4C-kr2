@@ -1,12 +1,12 @@
 import { Route, Routes } from "react-router";
-import LoginPage from "../pages/login/page.tsx";
-import RegisterPage from "../pages/register/page.tsx";
-import RootLayout from "../pages/layout.tsx";
-import ProductsPage from "../pages/products/page.tsx";
-import ProductPage from "../pages/products/[:id]/page.tsx";
-import CreateProductPage from "../pages/products/create/page.tsx";
-import NotFoundPage from "../pages/notFound.tsx";
-import ProfilePage from "../pages/profile/page.tsx";
+import RootLayout from "@/pages/layout.tsx";
+import LoginPage from "@/pages/login/page.tsx";
+import NotFoundPage from "@/pages/notFound";
+import ProductPage from "@/pages/products/[:id]/page";
+import CreateProductPage from "@/pages/products/create/page";
+import ProductsPage from "@/pages/products/page";
+import ProfilePage from "@/pages/profile/page.tsx";
+import RegisterPage from "@/pages/register/page.tsx";
 
 export default function SiteRoutes() {
   return (
