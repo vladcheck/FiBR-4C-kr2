@@ -2,7 +2,7 @@ import express from "express";
 import { nanoid } from "nanoid";
 import cors from "cors";
 import morgan from "morgan";
-import { swaggerParams } from "./src/config/swagger";
+import { swaggerParams } from "./src/swagger";
 import apiRouter from "./src/routers/apiRouter";
 
 const ID_SIZE = 6;

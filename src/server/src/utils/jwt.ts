@@ -17,7 +17,7 @@ interface JwtConfig {
 const JWT_CONFIG: JwtConfig = {
   access: {
     secret: "access_secret",
-    expiresIn: "15m",
+    expiresIn: "1d",
   },
   refresh: {
     secret: "refresh_secret",

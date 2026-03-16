@@ -1,5 +1,6 @@
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import path from "path";
 
 const PORT = process.env["PORT"] || "3000";
 
@@ -9,10 +10,13 @@ const swaggerOptions = {
     failOnErrors: true,
     info: { title: "API AUTH", version: "1.0.0" },
     servers: [
-      { url: `http://localhost:${PORT}`, description: "Локальный сервер" },
+      {
+        url: `http://localhost:${PORT}`,
+        description: "Локальный сервер",
+      },
     ],
   },
-  apis: ["./routers/*"],
+  apis: [path.resolve(__dirname, "./routers/*.ts")],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);

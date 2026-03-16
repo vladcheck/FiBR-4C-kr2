@@ -14,7 +14,7 @@ import {
 import type { Response, Request } from "express";
 
 const productsRouter: Router = Router();
-const productsPath = path.resolve("db", "products.json");
+const productsPath = path.resolve(__dirname, "../db/products.json");
 
 /**
  * @swagger

@@ -13,6 +13,7 @@ import {
   getNotFound,
   getUnauthorized,
   getInternalServerError,
+  getOk,
 } from "../utils/requestHelpers";
 import authMiddleware from "../middleware/authMiddleware";
 
@@ -23,7 +24,7 @@ function sanitize<T extends { hash: string }>(value: T): Omit<T, "hash"> {
 }
 
 const authRouter: Router = Router();
-const userPath = path.resolve("db", "users.json");
+const userPath = path.resolve("src", "db", "users.json");
 
 function getUserTokenBody(user: User, type: TokenType) {
   return type === "access"
@@ -232,6 +233,39 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     .json({ accessToken, refreshToken, uid: u.id });
 });
 
+/**
+ * @swagger
+ * /api/auth/refresh:
+ *   post:
+ *     summary: Провести ротацию токенов пользователя
+ *     description: Обновляет токены доступа и токен обновления, возвращая их пользователю
+ *     tags: [Auth, Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: ivan
+ *               password:
+ *                 type: string
+ *                 example: qwerty123
+ *     responses:
+ *       400:
+ *         description: Отсутствуют обязательные поля или введены неверные учетные данные (напр. пароли не совпадают)
+ *       401:
+ *        description: Пользователь не авторизован
+ *       404:
+ *         description: Пользователь не найден
+ *       200:
+ *         description: Пользователь успешно авторизован
+ */
 authRouter.post("/refresh", async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
 

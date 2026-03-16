@@ -68,9 +68,10 @@ class ApiAdapter {
   }
 
   async logOut() {
-    const response = await apiClient.post(`/auth/logout`, {});
-    localStorage.clear();
-    return response;
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("uid");
+    return {};
   }
 
   async login(data: { email: string; password: string }) {

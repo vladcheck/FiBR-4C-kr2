@@ -9,7 +9,7 @@ apiRouter.use("/api/auth", authRouter);
 apiRouter.use("/api/users", usersRouter);
 apiRouter.use("/api/products", productsRouter);
 
-/**
+/*\
  * @swagger
  * /:
  *  get:

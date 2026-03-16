@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
-import path from "path";
 import User from "../entities/User";
 import authMiddleware from "../middleware/authMiddleware";
 import dbAdapter from "../utils/DbAdapter";
 import { getBadRequest, getNotFound, getOk } from "../utils/requestHelpers";
 import type { Response, Request } from "express";
+import path from "node:path";
 
 const usersRouter: Router = Router();
-const userPath = path.resolve("db", "users.json");
+const usersPath = path.resolve(__dirname, "../db/users.json");
 
 /**
  * @swagger
@@ -63,7 +63,7 @@ const userPath = path.resolve("db", "users.json");
  *                $ref: '#/components/schemas/User'
  */
 usersRouter.get("/", async (_req: Request, res: Response) => {
-  const entries: User[] = await dbAdapter.readEntries(userPath);
+  const entries: User[] = await dbAdapter.readEntries(usersPath);
   return res.status(StatusCodes.OK).json(entries);
 });
 
@@ -101,7 +101,7 @@ usersRouter
     if (!id) {
       return getBadRequest(res);
     }
-    const entries: User[] = await dbAdapter.readEntries(userPath);
+    const entries: User[] = await dbAdapter.readEntries(usersPath);
     const user = entries.find((u) => u.id === id);
     if (!user) {
       return getNotFound(res);
@@ -116,7 +116,7 @@ usersRouter
     }
 
     try {
-      await dbAdapter.deleteEntryById(userPath, id as string);
+      await dbAdapter.deleteEntryById(usersPath, id as string);
       return getOk(res, "user deleted");
     } catch (error) {
       console.error(error);
