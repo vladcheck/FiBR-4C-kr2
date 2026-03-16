@@ -12,6 +12,7 @@ import {
   getOk,
 } from "../utils/requestHelpers";
 import type { Response, Request } from "express";
+import roleMiddleware from "../middleware/roleMiddleware";
 
 const productsRouter: Router = Router();
 const productsPath = path.resolve(__dirname, "../db/products.json");
@@ -189,56 +190,72 @@ productsRouter
 
     return res.status(StatusCodes.OK).json(product);
   })
-  .put("/:id", authMiddleware, async (req: Request, res: Response) => {
-    const { id } = req.params;
-    if (!id) {
-      return getBadRequest(res);
-    }
-
-    const products: ProductEntity[] = await dbAdapter.readEntries(productsPath);
-    const productIndex = products.findIndex((p) => p.id === id);
-    if (productIndex === -1) {
-      return getNotFound(res);
-    }
-
-    const p = products[productIndex]!;
-    const b = req.body;
-
-    if (b.title) p.title = b.title;
-    if (b.description) p.description = b.description;
-    if (b.price) {
-      if (isNaN(b.price) || parseFloat(b.price) < 0) {
-        return getBadRequest(
-          res,
-          getErrorString("Некорректная цена", b.price, "неотрицательное число"),
-        );
-      } else {
-        p.price = parseFloat(b.price);
+  .put(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["seller"]),
+    async (req: Request, res: Response) => {
+      const { id } = req.params;
+      if (!id) {
+        return getBadRequest(res);
       }
-    }
 
-    // products = products.splice(productIndex, 1, p); TODO: implement dbAdapter.updateEntry()
-    return getOk(res);
-  })
-  .delete("/:id", authMiddleware, async (req: Request, res: Response) => {
-    const { id } = req.params;
-    if (!id) {
-      return getBadRequest(res);
-    }
+      const products: ProductEntity[] =
+        await dbAdapter.readEntries(productsPath);
+      const productIndex = products.findIndex((p) => p.id === id);
+      if (productIndex === -1) {
+        return getNotFound(res);
+      }
 
-    const products: ProductEntity[] = await dbAdapter.readEntries(productsPath);
-    const product = products.find((p) => p.id === id);
-    if (!product) {
-      return getNotFound(res, "product not found");
-    }
+      const p = products[productIndex]!;
+      const b = req.body;
 
-    try {
-      await dbAdapter.deleteEntryById(productsPath, product.id);
+      if (b.title) p.title = b.title;
+      if (b.description) p.description = b.description;
+      if (b.price) {
+        if (isNaN(b.price) || parseFloat(b.price) < 0) {
+          return getBadRequest(
+            res,
+            getErrorString(
+              "Некорректная цена",
+              b.price,
+              "неотрицательное число",
+            ),
+          );
+        } else {
+          p.price = parseFloat(b.price);
+        }
+      }
+
+      // products = products.splice(productIndex, 1, p); TODO: implement dbAdapter.updateEntry()
       return getOk(res);
-    } catch (error) {
-      console.error(error);
-      return getInternalServerError(res, error);
-    }
-  });
+    },
+  )
+  .delete(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["seller"]),
+    async (req: Request, res: Response) => {
+      const { id } = req.params;
+      if (!id) {
+        return getBadRequest(res);
+      }
+
+      const products: ProductEntity[] =
+        await dbAdapter.readEntries(productsPath);
+      const product = products.find((p) => p.id === id);
+      if (!product) {
+        return getNotFound(res, "product not found");
+      }
+
+      try {
+        await dbAdapter.deleteEntryById(productsPath, product.id);
+        return getOk(res);
+      } catch (error) {
+        console.error(error);
+        return getInternalServerError(res, error);
+      }
+    },
+  );
 
 export default productsRouter;

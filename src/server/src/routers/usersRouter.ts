@@ -6,6 +6,7 @@ import dbAdapter from "../utils/DbAdapter";
 import { getBadRequest, getNotFound, getOk } from "../utils/requestHelpers";
 import type { Response, Request } from "express";
 import path from "node:path";
+import roleMiddleware from "../middleware/roleMiddleware";
 
 const usersRouter: Router = Router();
 const usersPath = path.resolve(__dirname, "../db/users.json");
@@ -109,22 +110,27 @@ usersRouter
 
     return res.status(StatusCodes.OK).json(user);
   })
-  .delete("/:id", authMiddleware, async (req: Request, res: Response) => {
-    const { id } = req.params;
-    if (!id) {
-      return getBadRequest(res, "uid not provided");
-    }
+  .delete(
+    "/:id",
+    authMiddleware,
+    roleMiddleware(["admin"]),
+    async (req: Request, res: Response) => {
+      const { id } = req.params;
+      if (!id) {
+        return getBadRequest(res, "uid not provided");
+      }
 
-    try {
-      await dbAdapter.deleteEntryById(usersPath, id as string);
-      return getOk(res, "user deleted");
-    } catch (error) {
-      console.error(error);
-      return getNotFound(
-        res,
-        `user with id ${id} was not found or doesn't exist`,
-      );
-    }
-  });
+      try {
+        await dbAdapter.deleteEntryById(usersPath, id as string);
+        return getOk(res, "user deleted");
+      } catch (error) {
+        console.error(error);
+        return getNotFound(
+          res,
+          `user with id ${id} was not found or doesn't exist`,
+        );
+      }
+    },
+  );
 
 export default usersRouter;

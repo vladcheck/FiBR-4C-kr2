@@ -1,3 +1,4 @@
+import { UserRole } from "../../../shared/types/User";
 export * from "../../../shared/types/User";
 
 export interface UserEntity {
@@ -6,4 +7,5 @@ export interface UserEntity {
   lastName: string;
   hash: string;
   email: string;
+  roles: UserRole[];
 }

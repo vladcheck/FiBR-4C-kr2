@@ -4,7 +4,7 @@ import { getUnauthorized } from "../utils/requestHelpers";
 import JwtSingleton from "../utils/jwt";
 
 export default function authMiddleware(
-  req: Request & JwtPayload,
+  req: Request & { user?: JwtPayload },
   res: Response,
   next: Function,
 ) {
@@ -18,7 +18,7 @@ export default function authMiddleware(
   }
 
   try {
-    const payload = JwtSingleton.verify(token, "access");
+    const payload = JwtSingleton.verify(token, "access") as JwtPayload;
     req["user"] = payload;
     next();
   } catch (err) {

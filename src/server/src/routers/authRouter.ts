@@ -2,7 +2,7 @@ import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import path from "path";
-import { UserEntity } from "../entities/User";
+import { UserEntity, UserRequestBody } from "../entities/User";
 import { getErrorString, nextId } from "../../server";
 import dbAdapter from "../utils/DbAdapter";
 import jwtSingleton, { TokenType } from "../utils/jwt";
@@ -13,7 +13,6 @@ import {
   getNotFound,
   getUnauthorized,
   getInternalServerError,
-  getOk,
 } from "../utils/requestHelpers";
 import authMiddleware from "../middleware/authMiddleware";
 
@@ -94,9 +93,9 @@ function getUserTokenBody(user: UserEntity, type: TokenType) {
  *         description: Пользователь с такой почтой уже существует
  */
 authRouter.post("/register", async (req: Request, res: Response) => {
-  const b = req.body;
+  const b: UserRequestBody = req.body;
 
-  if (["email", "password", "firstName", "lastName"].some((key) => !b[key])) {
+  if (!b.email || !b.firstName || !b.lastName || !b.password) {
     return getBadRequest(res);
   }
   if (b.password.length < 4) {
@@ -157,6 +156,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     lastName: b.lastName,
     email: b.email,
     hash: await hashPassword(b.password),
+    roles: ["user"],
   };
 
   try {

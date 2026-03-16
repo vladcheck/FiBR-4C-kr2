@@ -214,9 +214,12 @@ apiClient.interceptors.response.use(
         }
         const newAccessToken = response.data.accessToken;
         const newRefreshToken = response.data.refreshToken;
+
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
         localStorage.setItem("accessToken", newAccessToken);
         localStorage.setItem("refreshToken", newRefreshToken);
+
         return apiClient(originalRequest);
       } catch (refreshError) {
         return cleanupBeforeCookieRefreshReject(refreshError);
