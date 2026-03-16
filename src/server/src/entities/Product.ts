@@ -1,7 +1,4 @@
-export default interface Product {
-  id: string;
-  title: string;
-  category: string;
-  description?: string;
-  price: number;
-}
+import { Product } from "../../../shared/types/Product";
+export * from "../../../shared/types/Product";
+
+export interface ProductEntity extends Product {}

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 import path from "path";
 import { getErrorString, nextId } from "../../server";
-import Product from "../entities/Product";
+import { ProductEntity } from "../entities/Product";
 import authMiddleware from "../middleware/authMiddleware";
 import dbAdapter from "../utils/DbAdapter";
 import {
@@ -87,7 +87,7 @@ const productsPath = path.resolve(__dirname, "../db/products.json");
  */
 productsRouter
   .get("/", async (_req: Request, res: Response) => {
-    const entries: Product[] = await dbAdapter.readEntries(productsPath);
+    const entries: ProductEntity[] = await dbAdapter.readEntries(productsPath);
     return res.status(StatusCodes.OK).json(entries);
   })
   .post("/", async (req: Request, res: Response) => {
@@ -109,7 +109,7 @@ productsRouter
         );
     }
 
-    const newProduct: Product = {
+    const newProduct: ProductEntity = {
       id: nextId(),
       title: req.body.title,
       category: req.body.category,
@@ -181,7 +181,7 @@ productsRouter
       return getBadRequest(res);
     }
 
-    const products: Product[] = await dbAdapter.readEntries(productsPath);
+    const products: ProductEntity[] = await dbAdapter.readEntries(productsPath);
     const product = products.find((p) => p.id === id);
     if (!product) {
       return getNotFound(res);
@@ -195,7 +195,7 @@ productsRouter
       return getBadRequest(res);
     }
 
-    const products: Product[] = await dbAdapter.readEntries(productsPath);
+    const products: ProductEntity[] = await dbAdapter.readEntries(productsPath);
     const productIndex = products.findIndex((p) => p.id === id);
     if (productIndex === -1) {
       return getNotFound(res);
@@ -226,7 +226,7 @@ productsRouter
       return getBadRequest(res);
     }
 
-    const products: Product[] = await dbAdapter.readEntries(productsPath);
+    const products: ProductEntity[] = await dbAdapter.readEntries(productsPath);
     const product = products.find((p) => p.id === id);
     if (!product) {
       return getNotFound(res, "product not found");

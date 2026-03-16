@@ -1,4 +1,6 @@
-import axios, { HttpStatusCode } from "axios";
+import axios, { AxiosResponse, HttpStatusCode } from "axios";
+import { UserLoginResponse, UserResponse } from "../../entities/User";
+import { Product, ProductResponse } from "../../entities/Product";
 
 const HOST = "http://localhost";
 const PORT = 3000;
@@ -33,14 +35,18 @@ function storeTokens({
 
 class ApiAdapter {
   async getUserById(id: string) {
-    const response = await apiClient.get(`/users/${id}`);
+    const response: AxiosResponse<UserResponse> = await apiClient.get(
+      `/users/${id}`,
+    );
     return response;
   }
 
   async getCurrentUserInfo() {
     if (localStorage.getItem("uid")) {
       const uid = localStorage.getItem("uid");
-      const response = await apiClient.get(`/users/${uid}`);
+      const response: AxiosResponse<UserResponse> = await apiClient.get(
+        `/users/${uid}`,
+      );
       return response;
     }
     return null;
@@ -52,7 +58,7 @@ class ApiAdapter {
     email: string;
     password: string;
   }) {
-    const response = await apiClient.post(`/auth/register`, {
+    const response: AxiosResponse = await apiClient.post(`/auth/register`, {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -75,7 +81,10 @@ class ApiAdapter {
   }
 
   async login(data: { email: string; password: string }) {
-    const response = await apiClient.post("/auth/login", data);
+    const response: AxiosResponse<UserLoginResponse> = await apiClient.post(
+      "/auth/login",
+      data,
+    );
     if (response.status === HttpStatusCode.Ok) {
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
@@ -99,7 +108,7 @@ class ApiAdapter {
 
   async isLoggedIn(): Promise<boolean> {
     const accessToken = localStorage.getItem("accessToken");
-    const response = await apiClient.get("/auth/me", {
+    const response: AxiosResponse = await apiClient.get("/auth/me", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -117,12 +126,12 @@ class ApiAdapter {
   }
 
   async updateUserById(id: string, data: object) {
-    const response = await apiClient.post(`/users/${id}`, data);
+    const response: AxiosResponse = await apiClient.post(`/users/${id}`, data);
     return response;
   }
 
   async deleteUserById(id: string) {
-    const response = await apiClient.delete(`/users/${id}`);
+    const response: AxiosResponse = await apiClient.delete(`/users/${id}`);
     if (
       response.status !== HttpStatusCode.BadRequest &&
       response.status !== HttpStatusCode.Unauthorized
@@ -133,32 +142,39 @@ class ApiAdapter {
   }
 
   async getProducts() {
-    const response = await apiClient.get("/products");
+    const response: AxiosResponse<Product[]> = await apiClient.get("/products");
     return response;
   }
 
   async getProductById(id: string) {
-    const response = await apiClient.get(`/products/${id}`);
+    const response: AxiosResponse<ProductResponse> = await apiClient.get(
+      `/products/${id}`,
+    );
     return response;
   }
 
   async createProduct(data: object) {
-    const response = await apiClient.post(`/products`, data);
+    const response: AxiosResponse = await apiClient.post(`/products`, data);
     return response;
   }
 
   async updateProductById(id: string, data: object) {
-    const response = await apiClient.post(`/products/${id}`, data);
+    const response: AxiosResponse = await apiClient.post(
+      `/products/${id}`,
+      data,
+    );
     return response;
   }
 
   async deleteProductById(id: string) {
-    const response = await apiClient.delete(`/products/${id}`);
+    const response: AxiosResponse = await apiClient.delete(`/products/${id}`);
     return response;
   }
 
   async refresh(refreshToken: string) {
-    const response = await apiClient.post("/auth/refresh", { refreshToken });
+    const response: AxiosResponse = await apiClient.post("/auth/refresh", {
+      refreshToken,
+    });
     return response;
   }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import useApi from "../../features/api/useApi";
 import { useNavigate } from "react-router";
-import User from "../../entities/User";
+import { UserResponse } from "../../entities/User";
 import UserInfoCard from "./ui/UserInfoCard";
 import AccountActions from "./ui/AccountActions";
 import FlexContainer from "../../shared/ui/FlexContainer";
@@ -11,7 +11,7 @@ export default function ProfilePage() {
   const navigate = useNavigate();
   const api = useApi();
   const notifier = useNotify();
-  const [userInfo, setUserInfo] = useState<undefined | User>();
+  const [userInfo, setUserInfo] = useState<undefined | UserResponse>();
 
   useEffect(() => {
     api.isLoggedIn().then((isLoggedIn) => {

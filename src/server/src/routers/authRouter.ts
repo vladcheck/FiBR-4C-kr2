@@ -2,7 +2,7 @@ import { Router } from "express";
 import { StatusCodes } from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import path from "path";
-import User from "../entities/User";
+import { UserEntity } from "../entities/User";
 import { getErrorString, nextId } from "../../server";
 import dbAdapter from "../utils/DbAdapter";
 import jwtSingleton, { TokenType } from "../utils/jwt";
@@ -26,7 +26,7 @@ function sanitize<T extends { hash: string }>(value: T): Omit<T, "hash"> {
 const authRouter: Router = Router();
 const userPath = path.resolve("src", "db", "users.json");
 
-function getUserTokenBody(user: User, type: TokenType) {
+function getUserTokenBody(user: UserEntity, type: TokenType) {
   return type === "access"
     ? Object.entries(user).filter(([k]) => {
         return k !== "id";
@@ -143,7 +143,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
       getErrorString("Неправильная почта", b.firstName),
     );
   } else {
-    const entries: User[] = await dbAdapter.readEntries(userPath);
+    const entries: UserEntity[] = await dbAdapter.readEntries(userPath);
     if (entries.some((u) => u.email === b.email)) {
       return res
         .status(StatusCodes.CONFLICT)
@@ -151,7 +151,7 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     }
   }
 
-  const u: User = {
+  const u: UserEntity = {
     id: nextId(),
     firstName: b.firstName,
     lastName: b.lastName,
@@ -209,7 +209,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     return getBadRequest(res);
   }
 
-  const entries: User[] = await dbAdapter.readEntries(userPath);
+  const entries: UserEntity[] = await dbAdapter.readEntries(userPath);
   const u = entries.find((u) => u.email === email);
   if (!u) {
     return getNotFound(res);
@@ -280,7 +280,7 @@ authRouter.post("/refresh", async (req: Request, res: Response) => {
   try {
     const payload = jwtSingleton.verify(refreshToken, "refresh");
 
-    const entries: User[] = await dbAdapter.readEntries(userPath);
+    const entries: UserEntity[] = await dbAdapter.readEntries(userPath);
     const u = entries.find((u) => u.id === payload.sub);
     if (!u) {
       return getNotFound(res, "user not found");
@@ -345,7 +345,7 @@ authRouter.get(
       return getInternalServerError(res);
     }
 
-    const entries: User[] = await dbAdapter.readEntries(userPath);
+    const entries: UserEntity[] = await dbAdapter.readEntries(userPath);
     const u = entries.find((u) => u.id === id);
     if (!u) {
       return getNotFound(res);

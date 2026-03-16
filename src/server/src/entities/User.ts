@@ -1,7 +1,9 @@
-export default interface User {
+export * from "../../../shared/types/User";
+
+export interface UserEntity {
   id: string;
-  email: string;
   firstName: string;
   lastName: string;
   hash: string;
+  email: string;
 }
